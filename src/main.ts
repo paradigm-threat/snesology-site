@@ -589,7 +589,7 @@ async function main() {
     const openBtn = document.getElementById('open-btn')!;
     const saveBtn = document.getElementById('save-btn')!;
     const exportBtn = document.getElementById('export-btn')!;
-    const fullscreenBtn = document.getElementById('fullscreen-btn')!;
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
     const presetBtn = document.getElementById('preset-btn')!;
     const songSelect = document.getElementById('song-select') as HTMLSelectElement;
     const statusEl = document.getElementById('status')!;
@@ -894,7 +894,7 @@ C4 E4 G4 C5 /2
 
     exportBtn.addEventListener('click', exportWav);
 
-    fullscreenBtn.addEventListener('click', () => {
+    fullscreenBtn?.addEventListener('click', () => {
         document.documentElement.classList.toggle('fullscreen');
         setTimeout(() => editor.layout(), 100);
     });
