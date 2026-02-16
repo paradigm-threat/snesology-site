@@ -12,6 +12,7 @@
     <meta property="og:description"
         content="Play music with authentic Super Nintendo sound samples using the SongWalker music engine.">
     <meta property="og:type" content="website">
+    <link rel="icon" type="image/x-icon" href="/logos/icon.ico">
     <style>
         :root {
             --bg: #1e1e2e;
@@ -46,18 +47,16 @@
         }
 
         header {
-            padding: 1rem 2rem;
+            padding: 0.5rem 2rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
-        header h1 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--accent);
-            letter-spacing: -0.02em;
+        header .logo {
+            height: 48px;
+            width: auto;
         }
 
         header .subtitle {
@@ -555,8 +554,7 @@
 
 <body>
     <header>
-        <h1>SNESology</h1>
-        <span class="subtitle">SNES Music Player</span>
+        <img src="/logos/logo-text.png" alt="SNESology" class="logo">
     </header>
 
     <div class="toolbar">
