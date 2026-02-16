@@ -575,42 +575,42 @@
     </div>
 
     <div class="editor-wrapper">
-      <div class="editor-main">
-        <div id="editor-container"></div>
-        <div class="viz-panel">
-            <div class="viz-section">
-                <div class="viz-label">Level</div>
-                <div class="peak-meter">
-                    <div class="peak-bar-track">
-                        <div class="peak-bar" id="peak-bar-l"></div>
+        <div class="editor-main">
+            <div id="editor-container"></div>
+            <div class="viz-panel">
+                <div class="viz-section">
+                    <div class="viz-label">Level</div>
+                    <div class="peak-meter">
+                        <div class="peak-bar-track">
+                            <div class="peak-bar" id="peak-bar-l"></div>
+                        </div>
+                        <div class="peak-bar-track">
+                            <div class="peak-bar" id="peak-bar-r"></div>
+                        </div>
                     </div>
-                    <div class="peak-bar-track">
-                        <div class="peak-bar" id="peak-bar-r"></div>
+                    <div class="peak-value" id="peak-value">-∞ dB</div>
+                </div>
+                <div class="viz-section">
+                    <div class="viz-label">Spectrum</div>
+                    <canvas id="spectrum-canvas"></canvas>
+                </div>
+                <div class="viz-section">
+                    <div class="viz-label">Waveform</div>
+                    <div class="waveform-container">
+                        <canvas id="waveform-canvas"></canvas>
                     </div>
                 </div>
-                <div class="peak-value" id="peak-value">-∞ dB</div>
-            </div>
-            <div class="viz-section">
-                <div class="viz-label">Spectrum</div>
-                <canvas id="spectrum-canvas"></canvas>
-            </div>
-            <div class="viz-section">
-                <div class="viz-label">Waveform</div>
-                <div class="waveform-container">
-                    <canvas id="waveform-canvas"></canvas>
-                </div>
             </div>
         </div>
-      </div>
-      <div class="editor-statusbar">
-        <div class="status-left">
-            <span class="status-errors" id="status-errors"></span>
-            <span class="status-warnings" id="status-warnings"></span>
+        <div class="editor-statusbar">
+            <div class="status-left">
+                <span class="status-errors" id="status-errors"></span>
+                <span class="status-warnings" id="status-warnings"></span>
+            </div>
+            <div class="status-right">
+                <span id="status-version">loading…</span>
+            </div>
         </div>
-        <div class="status-right">
-            <span id="status-version">loading…</span>
-        </div>
-      </div>
     </div>
 
     <div class="about">

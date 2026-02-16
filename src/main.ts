@@ -628,7 +628,7 @@ async function main() {
     }
 
     // Preset browser
-    const presetLoader = new PresetLoader('https://snesology-daa154.gitlab.io');
+    const presetLoader = new PresetLoader(import.meta.env.VITE_LIBRARY_URL);
     const editorWrapper = document.querySelector('.editor-wrapper') as HTMLElement;
     const presetBrowser = new PresetBrowser(editorWrapper, presetLoader);
 
