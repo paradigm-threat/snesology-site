@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNESology — SNES Music Player</title>
+    <meta name="description"
+        content="SNESology is a SNES music player using authentic Super Nintendo sound samples. Write and play music with real SNES instruments.">
+    <meta name="theme-color" content="#1e1e2e">
+    <meta property="og:title" content="SNESology — SNES Music Player">
+    <meta property="og:description"
+        content="Play music with authentic Super Nintendo sound samples using the SongWalker music engine.">
+    <meta property="og:type" content="website">
+    <style>
+        :root {
+            --bg: #1e1e2e;
+            --surface: #181825;
+            --overlay: #11111b;
+            --text: #cdd6f4;
+            --subtext: #a6adc8;
+            --accent: #a6e3a1;
+            --accent-hover: #94e2d5;
+            --error: #f38ba8;
+            --border: #313244;
+            --green: #a6e3a1;
+            --red: #f38ba8;
+            --mauve: #cba6f7;
+            --peach: #fab387;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+        }
+
+        header .subtitle {
+            font-size: 0.85rem;
+            color: var(--subtext);
+        }
+
+        .toolbar {
+            padding: 0.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.15s ease;
+        }
+
+        button:hover {
+            background: var(--border);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        select {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+            font-family: inherit;
+        }
+
+        select:hover {
+            background: var(--border);
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        select option {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        button.primary {
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: 600;
+            border-color: var(--accent);
+        }
+
+        button.primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        button.danger {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        button.danger:hover {
+            background: var(--red);
+            color: var(--bg);
+        }
+
+        .separator {
+            width: 1px;
+            height: 1.2rem;
+            background: var(--border);
+            margin: 0 0.25rem;
+        }
+
+        .spacer {
+            flex: 1;
+        }
+
+        #status {
+            font-size: 0.8rem;
+            color: var(--subtext);
+            font-family: var(--font-mono);
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .editor-main {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        #editor-container {
+            flex: 1;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        /* ── Right-side visualizer panel ─────────────── */
+        .viz-panel {
+            width: 180px;
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border);
+            background: var(--surface);
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .viz-section {
+            display: flex;
+            flex-direction: column;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .viz-section:last-child {
+            border-bottom: none;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .viz-label {
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            color: var(--subtext);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.35rem;
+        }
+
+        /* Peak meter */
+        .peak-meter {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 80px;
+            background: var(--overlay);
+            border-radius: 3px;
+            padding: 4px;
+            position: relative;
+        }
+
+        .peak-bar-track {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            position: relative;
+        }
+
+        .peak-bar {
+            width: 100%;
+            background: var(--green);
+            border-radius: 1px;
+            transition: height 0.05s linear;
+            min-height: 1px;
+        }
+
+        .peak-bar.hot {
+            background: var(--peach);
+        }
+
+        .peak-bar.clip {
+            background: var(--red);
+        }
+
+        .peak-value {
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            color: var(--subtext);
+            text-align: center;
+            margin-top: 0.25rem;
+        }
+
+        /* Waveform display */
+        .waveform-container {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+        }
+
+        #waveform-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 3px;
+        }
+
+        /* Spectrum display */
+        #spectrum-canvas {
+            width: 100%;
+            height: 60px;
+            display: block;
+            border-radius: 3px;
+            background: var(--overlay);
+        }
+
+        /* ── Editor Status Bar ─────────────────────── */
+        .editor-statusbar {
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 0.75rem;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--subtext);
+            min-height: 1.5rem;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        .editor-statusbar .status-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 0;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .editor-statusbar .status-left .status-errors {
+            color: var(--error);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: default;
+        }
+
+        .editor-statusbar .status-left .status-warnings {
+            color: var(--peach);
+            white-space: nowrap;
+        }
+
+        .editor-statusbar .status-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Preset Browser Panel ─────────────────── */
+        .preset-browser {
+            width: 280px;
+            min-width: 200px;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            background: var(--surface);
+            overflow: hidden;
+        }
+
+        .preset-browser.collapsed {
+            width: 0;
+            min-width: 0;
+            border-right: none;
+        }
+
+        .pb-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--overlay);
+        }
+
+        .pb-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pb-close {
+            background: transparent;
+            border: none;
+            color: var(--subtext);
+            cursor: pointer;
+            padding: 0.2rem;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .pb-close:hover {
+            color: var(--text);
+        }
+
+        .pb-search-container {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pb-search {
+            width: 100%;
+            background: var(--overlay);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.4rem 0.6rem;
+            color: var(--text);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .pb-search:focus {
+            border-color: var(--accent);
+        }
+
+        .pb-search::placeholder {
+            color: var(--subtext);
+        }
+
+        .pb-library-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pb-chip {
+            background: var(--overlay);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            color: var(--subtext);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .pb-chip:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .pb-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg);
+        }
+
+        .pb-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .pb-item {
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.1s ease;
+            gap: 0.5rem;
+        }
+
+        .pb-item:hover {
+            background: var(--border);
+        }
+
+        .pb-item-name {
+            flex: 1;
+            font-size: 0.8rem;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pb-item-category {
+            font-size: 0.65rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .pb-status {
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--subtext);
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── About Section ─────────────────────────── */
+        .about {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about h2 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .about p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: var(--subtext);
+        }
+
+        .about code {
+            background: var(--surface);
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+
+        .about a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .about a:hover {
+            text-decoration: underline;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature {
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .feature h3 {
+            color: var(--accent);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        .footer {
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--subtext);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>SNESology</h1>
+        <span class="subtitle">SNES Music Player</span>
+    </header>
+
+    <div class="toolbar">
+        <button id="play-btn" class="primary">▶ Play</button>
+        <button id="stop-btn">◼ Stop</button>
+        <div class="separator"></div>
+        <button id="preset-btn">🎹 Presets</button>
+        <div class="separator"></div>
+        <button id="open-btn">📂 Open</button>
+        <button id="save-btn">💾 Save</button>
+        <button id="wav-btn">🎵 WAV</button>
+        <div class="separator"></div>
+        <select id="song-select">
+            <option value="">— Example Songs —</option>
+        </select>
+        <div class="spacer"></div>
+        <span id="status"></span>
+    </div>
+
+    <div class="editor-wrapper">
+      <div class="editor-main">
+        <div id="editor-container"></div>
+        <div class="viz-panel">
+            <div class="viz-section">
+                <div class="viz-label">Level</div>
+                <div class="peak-meter">
+                    <div class="peak-bar-track">
+                        <div class="peak-bar" id="peak-bar-l"></div>
+                    </div>
+                    <div class="peak-bar-track">
+                        <div class="peak-bar" id="peak-bar-r"></div>
+                    </div>
+                </div>
+                <div class="peak-value" id="peak-value">-∞ dB</div>
+            </div>
+            <div class="viz-section">
+                <div class="viz-label">Spectrum</div>
+                <canvas id="spectrum-canvas"></canvas>
+            </div>
+            <div class="viz-section">
+                <div class="viz-label">Waveform</div>
+                <div class="waveform-container">
+                    <canvas id="waveform-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="editor-statusbar">
+        <div class="status-left">
+            <span class="status-errors" id="status-errors"></span>
+            <span class="status-warnings" id="status-warnings"></span>
+        </div>
+        <div class="status-right">
+            <span id="status-version">loading…</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about">
+        <h2>About SNESology</h2>
+        <p>
+            SNESology is a music player featuring authentic Super Nintendo sound samples
+            from classic SNES games. Powered by the SongWalker music engine, it compiles and
+            synthesizes audio entirely in your browser using WebAssembly.
+        </p>
+
+        <div class="features">
+            <div class="feature">
+                <h3>SNES Samples</h3>
+                <p>Authentic sound samples extracted from Super Nintendo games.</p>
+            </div>
+            <div class="feature">
+                <h3>SongWalker Engine</h3>
+                <p>Write music using minimalist notation with JavaScript-style control flow.</p>
+            </div>
+            <div class="feature">
+                <h3>Rust + WASM</h3>
+                <p>The synthesizer runs in Rust via WebAssembly for deterministic, cross-platform audio.</p>
+            </div>
+            <div class="feature">
+                <h3>WAV Export</h3>
+                <p>Export your compositions as WAV files. Same engine, same sound — in the browser.</p>
+            </div>
+        </div>
+
+        <p>
+            Press <code>Ctrl+Enter</code> to play. Use <strong>Presets</strong> to browse SNES instruments.
+        </p>
+        <p>
+            <a href="https://songwalker.net" target="_blank" rel="noopener">SongWalker</a> &middot;
+            <a href="https://github.com/clevertree/songwalker-js" target="_blank" rel="noopener">GitHub</a>
+        </p>
+    </div>
+
+    <div class="footer">
+        SNESology &middot; Powered by <a href="https://songwalker.net">SongWalker</a>
+    </div>
+
+    <script type="module" src="./src/main.ts"></script>
+</body>
+
+</html>

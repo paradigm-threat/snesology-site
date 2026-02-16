@@ -1,23 +1,12 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
+node_modules/
+dist/
+*.log
 .DS_Store
-*.pem
+
+# Next.js (archived)
+archive/node_modules/
+archive/.next/
+archive/out/
 
 # debug
 npm-debug.log*
