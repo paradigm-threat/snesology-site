@@ -58,7 +58,7 @@ self.MonacoEnvironment = {
 
 // ── Example song ─────────────────────────────────────────
 
-const EXAMPLE_SONG = `// SNESology Example — SNES Music Player
+const EXAMPLE_SONG = `// SNESology Example — Retro Music Composer
 // Browse presets to find SNES instruments
 
 const synth = Oscillator({type: 'triangle'});

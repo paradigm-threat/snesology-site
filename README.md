@@ -1,6 +1,6 @@
 # SNESology
 
-SNES Music Player powered by [SongWalker](https://songwalker.net).
+Retro Music Composer powered by [SongWalker](https://songwalker.net).
 
 Play music using authentic Super Nintendo sound samples with the SongWalker music engine.
 
