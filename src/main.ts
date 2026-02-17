@@ -1,4 +1,4 @@
-import { initWasm, compile_song, core_version, SongPlayer, PresetLoader } from 'songwalker-js';
+import { initWasm, compile_song, core_version, SongPlayer, PresetLoader, PresetBrowser } from 'songwalker-js';
 import {
     LANGUAGE_ID,
     languageConfig,
@@ -6,10 +6,7 @@ import {
     editorTheme,
     completionItems,
 } from 'songwalker-js/monaco';
-import { PresetBrowser } from './preset-browser.js';
 import * as monaco from 'monaco-editor';
-
-// ── Types ────────────────────────────────────────────────
 
 interface NoteEvent {
     time: number;
@@ -599,8 +596,8 @@ async function main() {
     const playBtn = document.getElementById('play-btn')!;
     const stopBtn = document.getElementById('stop-btn')!;
     const openBtn = document.getElementById('open-btn')!;
-    const saveBtn = document.getElementById('save-btn')!;
-    const exportBtn = document.getElementById('export-btn')!;
+    const saveBtn = document.getElementById('save-btn');
+    const exportBtn = document.getElementById('export-btn');
     const fullscreenBtn = document.getElementById('fullscreen-btn');
     const presetBtn = document.getElementById('preset-btn')!;
     const songSelect = document.getElementById('song-select') as HTMLSelectElement;
@@ -737,9 +734,12 @@ async function main() {
             const previewSource = `
 const inst = loadPreset("${presetRef}");
 track.beatsPerMinute = 120;
-track.instrument = inst;
-track.noteLength = 1/4;
-C4 E4 G4 C5 /2
+preview(inst);
+track preview(inst) {
+    track.instrument = inst;
+    track.noteLength = 1/4;
+    C4 E4 G4 C5 /2
+}
 `;
             showStatusWarning(`Playing preview…`);
             await player.playSource(previewSource.trim(), presetsJson);
@@ -902,9 +902,9 @@ C4 E4 G4 C5 /2
         }
     });
 
-    saveBtn.addEventListener('click', () => saveFile(editor.getValue()));
+    saveBtn?.addEventListener('click', () => saveFile(editor.getValue()));
 
-    exportBtn.addEventListener('click', exportWav);
+    exportBtn?.addEventListener('click', exportWav);
 
     fullscreenBtn?.addEventListener('click', () => {
         document.documentElement.classList.toggle('fullscreen');
