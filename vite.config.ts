@@ -19,6 +19,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
+                keyboard: resolve(__dirname, 'keyboard.html'),
             },
             output: {
                 manualChunks: {
