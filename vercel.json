@@ -1,0 +1,27 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.snesology.org" }],
+      "destination": "https://snesology.org/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "snesology.net" }],
+      "destination": "https://snesology.org/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.snesology.net" }],
+      "destination": "https://snesology.org/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/keyboard",
+      "destination": "/keyboard.html",
+      "permanent": true
+    }
+  ]
+}
