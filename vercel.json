@@ -1,0 +1,20 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.snesology.org"
+        }
+      ],
+      "destination": "https://snesology.org/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/keyboard",
+      "destination": "/keyboard.html",
+      "permanent": true
+    }
+  ]
+}
