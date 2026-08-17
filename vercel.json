@@ -2,13 +2,13 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.snesology.org"
-        }
-      ],
+      "has": [{ "type": "host", "value": "www.snesology.org" }],
       "destination": "https://snesology.org/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
       "permanent": true
     },
     {
