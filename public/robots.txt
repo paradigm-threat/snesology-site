@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://snesology.org/sitemap.xml
